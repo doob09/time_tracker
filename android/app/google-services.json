@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "986899254616",
+    "firebase_url": "https://login-demo-6aeea.firebaseio.com",
+    "project_id": "login-demo-6aeea",
+    "storage_bucket": "login-demo-6aeea.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:986899254616:android:8ae767316ff4f32e03a92d",
+        "android_client_info": {
+          "package_name": "com.example.time_tracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "986899254616-acmn2cs10shg3i8755277o3d9f104uld.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.time_tracker",
+            "certificate_hash": "1892f40ee4a696965466fd7cf6826b7dd060b03a"
+          }
+        },
+        {
+          "client_id": "986899254616-2i1hpao81d87l0lt2ui31vedjb471cci.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzrCG961CxtSnOKLAN-dFWFB-mU_FnrCU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "986899254616-2i1hpao81d87l0lt2ui31vedjb471cci.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
