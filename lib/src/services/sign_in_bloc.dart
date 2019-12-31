@@ -11,12 +11,17 @@ class SignInBloc {
 
   final StreamController<bool> _isLoadingController = StreamController<bool>();
   Stream<bool> get isLoadingStream => _isLoadingController.stream;
+  void _setIsLoading(bool isLoading) => _isLoadingController.add(isLoading);
 
   void dispose() {
     _isLoadingController.close();
   }
 
-  void _setIsLoading(bool isLoading) => _isLoadingController.add(isLoading);
+
+  
+
+  Future<User> signInAnonymously() async => _signIn(auth.signInAnonymously);
+  Future<User> signInWithGoogle() async => _signIn(auth.signInWithGoogle);
 
   Future<User> _signIn(Future<User> Function() signInMethod) async {
     try {
@@ -27,7 +32,4 @@ class SignInBloc {
       rethrow;
     }
   }
-
-  Future<User> signInAnonymously() async => _signIn(auth.signInAnonymously);
-  Future<User> signInWithGoogle() async => _signIn(auth.signInWithGoogle);
 }

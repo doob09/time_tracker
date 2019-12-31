@@ -2,20 +2,20 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
 import 'package:time_tracker/src/models/email_sign_in_model.dart';
-import 'package:time_tracker/src/screens/sign_in/validator.dart';
+// import 'package:time_tracker/src/screens/sign_in/validator.dart';
 import 'package:time_tracker/src/services/auth.dart';
 import 'package:time_tracker/src/services/email_sign_bloc.dart';
-import 'package:time_tracker/src/widgets/platform_alert_dialog.dart';
+import 'package:time_tracker/src/widgets/plat_form_exception_alert_dialog.dart';
+// import 'package:time_tracker/src/widgets/platform_alert_dialog.dart';
 
 import '../../widgets/form_submit_button.dart';
 
 class EmailSignInFormBlocBased extends StatefulWidget
-    with EmailAndPasswordValidators {
-  final EmailSignInBloc bloc;
-
-  EmailSignInFormBlocBased({@required this.bloc});
-
+     {
+  
+ 
   static Widget create(BuildContext context) {
     final AuthBase auth = Provider.of<AuthBase>(context);
     return Provider<EmailSignInBloc>(
@@ -26,6 +26,11 @@ class EmailSignInFormBlocBased extends StatefulWidget
       dispose: (context, bloc) => bloc.dispose(),
     );
   }
+
+  final EmailSignInBloc bloc;
+
+  EmailSignInFormBlocBased({@required this.bloc});
+
 
   @override
   _EmailSignInFormBlocBasedState createState() =>
@@ -38,8 +43,7 @@ class _EmailSignInFormBlocBasedState extends State<EmailSignInFormBlocBased> {
   final FocusNode _emailFocus = FocusNode();
   final FocusNode _passwordFocus = FocusNode();
 
-  String get _email => _emailController.text;
-  String get _password => _passwordController.text;
+
 
   @override
   void dispose() {
@@ -52,6 +56,7 @@ class _EmailSignInFormBlocBasedState extends State<EmailSignInFormBlocBased> {
 
   @override
   Widget build(BuildContext context) {
+    
     return StreamBuilder<EmailSignInModel>(
         stream: widget.bloc.emailSIStream,
         initialData: EmailSignInModel(),
@@ -69,103 +74,82 @@ class _EmailSignInFormBlocBasedState extends State<EmailSignInFormBlocBased> {
   }
 
   List<Widget> _buildChildren(EmailSignInModel emodel) {
-    final primaryText = emodel.formType == EmailSignInFormType.signIn
-        ? 'Sign In'
-        : 'Create an account';
-    final secondaryText = emodel.formType == EmailSignInFormType.signIn
-        ? 'Need an account ? Register'
-        : 'Have an account ? Sign in';
-    bool submitEnable = widget.emailValidator.isValid(_email) &&
-        widget.passwordValidator.isValid(_password) &&
-        !emodel.isLoading;
-
+    
     return [
       _buildEmailTextField(emodel),
       SizedBox(height: 8.0),
       _buildPasswordTextField(emodel),
       SizedBox(height: 8.0),
       FormSubmitButton(
-        text: primaryText,
-        onPressed: submitEnable ? _submit : null,
+        text: emodel.primaryButtonText,
+        onPressed: emodel.canSubmit ? _submit : null,
       ),
       SizedBox(height: 8.0),
       FlatButton(
-        child: Text(secondaryText),
-        onPressed: !emodel.isLoading ? () => _toggleFormType(emodel) : null,
+        child: Text(emodel.secondaryButtonText),
+        onPressed: !emodel.isLoading ?  _toggleFormType : null,
       ),
     ];
   }
 
   TextField _buildEmailTextField(EmailSignInModel emodel) {
-    bool showErrorText =
-        emodel.submitted && !widget.emailValidator.isValid(_email);
+    
     return TextField(
       controller: _emailController,
       focusNode: _emailFocus,
       decoration: InputDecoration(
         labelText: 'Email ',
         hintText: '@email.com',
-        errorText: showErrorText ? widget.invalidEmailError : null,
+        errorText: emodel.invalidEmailError,
         enabled: emodel.isLoading == false,
       ),
       keyboardType: TextInputType.emailAddress,
       textInputAction: TextInputAction.next,
-      onChanged: (email) => widget.bloc.updateWith(email: email),
+      onChanged: widget.bloc.updateEmail,
       onEditingComplete: () => _emailEditingComplete(emodel),
     );
   }
 
   void _emailEditingComplete(EmailSignInModel emodel) {
-    final newFocus = widget.emailValidator.isValid(emodel.email)
+    final newFocus = emodel.emailValidator.isValid(emodel.email)
         ? _passwordFocus
         : _emailFocus;
     FocusScope.of(context).requestFocus(newFocus);
   }
 
   TextField _buildPasswordTextField(EmailSignInModel emodel) {
-    bool showErrorText =
-        emodel.submitted && !widget.passwordValidator.isValid(_password);
+    
     return TextField(
       controller: _passwordController,
       focusNode: _passwordFocus,
       decoration: InputDecoration(
         labelText: 'Password ',
-        errorText: showErrorText ? widget.invalidPasswordError : null,
+        errorText: emodel.passwordErrorText,
         enabled: emodel.isLoading == false,
       ),
       obscureText: true,
       textInputAction: TextInputAction.done,
-      onChanged: (password) => widget.bloc.updateWith(password: password),
+      onChanged: widget.bloc.updatePassword,
       onEditingComplete: _submit,
     );
   }
 
   Future<void> _submit() async {
-    // print('submit call');
+    
     try {
-      // await Future.delayed(Duration(seconds: 5));
+      
       await widget.bloc.submit();
       Navigator.of(context).pop();
-    } catch (e) {
-      PlatformAlertDialog(
-        title:'Sign In Failed',
-        content: e.toString(),
-        defaultActionText: 'OK',
+    } on PlatformException catch (e) {
+      PlatformExceptionAlertDialog(
+        title: 'Sign In Failed',
+        exception: e,
       ).show(context);
     }
   }
 
-  void _toggleFormType(EmailSignInModel emodel) {
-    final formType = emodel.formType == EmailSignInFormType.signIn
-        ? EmailSignInFormType.register
-        : EmailSignInFormType.signIn;
-    widget.bloc.updateWith(
-      email: '',
-      password: '',
-      formType: formType,
-      isLoading: false,
-      submitted: false,
-    );
+  void _toggleFormType() {
+    widget.bloc.toggleFormType();
     _emailController.clear();
     _passwordController.clear();
   }

@@ -20,6 +20,41 @@ class EmailSignInBloc {
     _emailSIController.close();
   }
 
+  void toggleFormType() {
+    final formType = _emailSIModel.formType == EmailSignInFormType.signIn
+        ? EmailSignInFormType.signIn
+        : EmailSignInFormType.register;
+    updateWith(
+      email: '',
+      password: '',
+      formType: formType,
+      isLoading: false,
+      submitted: false,
+    );
+  }
+
+  Future<void> submit() async {
+    updateWith(submitted: true, isLoading: true);
+    try {
+      if (_emailSIModel.formType == EmailSignInFormType.signIn) {
+        await auth.signInWithEmailAndPassword(
+            _emailSIModel.email, _emailSIModel.password);
+      } else {
+        await auth.createUserWithEmailAndPassword(
+            _emailSIModel.email, _emailSIModel.password);
+      }
+    } catch (e) {
+      updateWith(isLoading: false);
+      rethrow;
+    } 
+  }
+
+  void updateEmail(String email) {
+    updateWith(email: email);
+  }
+
+  void updatePassword(String password) => updateWith(password: password);
+
   void updateWith({
     String email,
     String password,
@@ -35,22 +70,5 @@ class EmailSignInBloc {
       submitted: submitted,
     );
     _emailSIController.add(_emailSIModel);
-  }
-
-  Future<void> submit() async {
-    updateWith(submitted: true, isLoading: true);
-    try {
-      if (_emailSIModel.formType == EmailSignInFormType.signIn) {
-        await auth.signInWithEmailAndPassword(
-            _emailSIModel.email, _emailSIModel.password);
-      } else {
-        await auth.createUserWithEmailAndPassword(
-            _emailSIModel.email, _emailSIModel.password);
-      }
-    } catch (e) {
-      rethrow;
-    } finally {
-      updateWith(isLoading: false);
-    }
   }
 }

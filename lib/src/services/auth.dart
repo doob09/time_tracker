@@ -38,7 +38,7 @@ class AuthService extends AuthBase {
       AuthResult result = await _auth.signInAnonymously();
       FirebaseUser user = result.user;
       return _userFromFirebase(user);
-    } catch (e) {
+    } on PlatformException catch (e) {
       print(e.toString());
       return null;
     }
