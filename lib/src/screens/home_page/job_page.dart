@@ -3,12 +3,12 @@ import 'package:provider/provider.dart';
 import 'package:time_tracker/src/services/auth.dart';
 import 'package:time_tracker/src/widgets/platform_alert_dialog.dart';
 
-class HomePage extends StatelessWidget {
+class JobsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home Page'),
+        title: Text('Jobs'),
         actions: <Widget>[
           FlatButton(
             child: Text(

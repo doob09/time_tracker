@@ -4,20 +4,14 @@ import 'package:flutter/foundation.dart';
 import 'package:time_tracker/src/models/user.dart';
 import 'package:time_tracker/src/services/auth.dart';
 
-class SignInBloc {
+class SignInManager {
   final AuthBase auth;
+  final ValueNotifier<bool> isLoading;
 
-  SignInBloc({@required this.auth});
-
-  final StreamController<bool> _isLoadingController = StreamController<bool>();
-  Stream<bool> get isLoadingStream => _isLoadingController.stream;
-  void _setIsLoading(bool isLoading) => _isLoadingController.add(isLoading);
-
-  void dispose() {
-    _isLoadingController.close();
-  }
+  SignInManager({@required this.auth, @required this.isLoading});
 
 
+  
   
 
   Future<User> signInAnonymously() async => _signIn(auth.signInAnonymously);
@@ -25,10 +19,10 @@ class SignInBloc {
 
   Future<User> _signIn(Future<User> Function() signInMethod) async {
     try {
-      _setIsLoading(true);
+      isLoading.value = true;
       return await signInMethod();
     } catch (e) {
-      _setIsLoading(false);
+      isLoading.value = false;
       rethrow;
     }
   }

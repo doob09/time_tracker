@@ -3,7 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:time_tracker/src/services/auth.dart';
 import 'package:flutter/material.dart';
 import '../screens/sign_in/sign_in_page.dart';
-import '../screens/home_page.dart';
+
+import 'home_page/job_page.dart';
 
 class LandingPage extends StatelessWidget {
   @override
@@ -14,7 +15,7 @@ class LandingPage extends StatelessWidget {
       builder: (context, AsyncSnapshot<User> snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {
           final user = snapshot.data;
-          return user != null ? HomePage() : SignInPage.create(context);
+          return user != null ? JobsPage() : SignInPage.create(context);
         }
         return Center(child: CircularProgressIndicator());
       },
