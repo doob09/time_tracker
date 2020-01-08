@@ -6,6 +6,7 @@ import 'package:time_tracker/src/services/auth.dart';
 
 
 class EmailSignInChangeModel with EmailAndPasswordValidators, ChangeNotifier {
+  
   String email;
   String password;
   EmailSignInFormType formType;
