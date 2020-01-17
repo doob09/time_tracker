@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 
 abstract class PlatformWidget extends StatelessWidget{
 
-  Widget buildCupertinoWidget(BuildContext context);
-  Widget buildMaterialWidget(BuildContext context);
+ 
 
   @override
   Widget build(BuildContext context){
@@ -15,5 +14,8 @@ abstract class PlatformWidget extends StatelessWidget{
     }
     return buildMaterialWidget(context);
   }
+
+  Widget buildCupertinoWidget(BuildContext context);
+  Widget buildMaterialWidget(BuildContext context);
 }
 
